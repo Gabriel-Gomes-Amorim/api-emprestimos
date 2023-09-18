@@ -10,4 +10,11 @@ Este repositório contém um sistema de gerenciamento de empréstimos desenvolvi
 
 3. **Verificação de Disponibilidade de Empréstimos:** Um recurso poderoso que permite aos usuários verificar a disponibilidade de itens para empréstimo. Isso ajuda a evitar conflitos de empréstimos sobre os mesmos recursos e garante uma melhor experiência para os usuários.
 
+## Tecnologias Utilizadas
 
+- **NodeJS**
+- **NestJS**
+- **Prisma ORM**
+- **Docker**
+- **Postgres**
+  
