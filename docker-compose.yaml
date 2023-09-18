@@ -13,22 +13,21 @@ services:
       - .:/usr/app
     environment:
       DB_HOST: database
-      DB_PORT: 3306
+      DB_PORT: 5432
     networks:
       - api_emprestimos
 
   database:
-    image: mysql:8.0
+    image: postgres:13
     volumes:
-      - './.mysql-data/db:/var/lib/mysql'
+      - './.postgres-data/db:/var/lib/postgresql/data'
     restart: always
     ports:
-      - ${DB_PORT}:3306
+      - ${DB_PORT}:5432
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USERNAME}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     networks:
       - api_emprestimos
 
