@@ -13,6 +13,10 @@ export class LoanRepository {
     });
   }
 
+  findAll() {
+    return this.prismaService.loan.findMany();
+  }
+
   async findByType(type: string): Promise<Loan | null> {
     const findLoan = this.prismaService.loan.findUnique({
       where: {

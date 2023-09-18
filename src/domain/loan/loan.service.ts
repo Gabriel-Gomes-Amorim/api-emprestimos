@@ -6,6 +6,13 @@ import { CreateLoanDTO } from './dto/create-loan.dto';
 import { TypeException } from '../utils/errors/type-exists';
 import { UpdateLoanDTO } from './dto/update-loan';
 
+export interface ILoanRequirements {
+  cpf: string;
+  name: string;
+  income: number;
+  age: number;
+  location: string;
+}
 @Injectable()
 export class LoanService {
   constructor(private readonly loanRepository: LoanRepository) {}
@@ -31,8 +38,75 @@ export class LoanService {
     };
   }
 
+  async userPermittedLoans(loanRequirements: ILoanRequirements) {
+    const { age, cpf, income, location, name } = loanRequirements;
+
+    let loanApproved = [];
+
+    if (income <= 3000) {
+      const personalLoan = await this.loanRepository.findByType('pessoal');
+      if (personalLoan != null) {
+        loanApproved.push(personalLoan);
+      }
+    }
+
+    if (
+      income >= 3000 &&
+      income <= 5000 &&
+      age < 30 &&
+      (location === 'SP' ||
+        location === 'São Paulo' ||
+        location === 'são paulo')
+    ) {
+      const personalLoan = await this.loanRepository.findByType('pessoal');
+      if (personalLoan !== null) {
+        loanApproved.push(personalLoan);
+      }
+    }
+
+    if (income >= 5000) {
+      const payrollLoan = await this.loanRepository.findByType('consignado');
+      if (payrollLoan !== null) {
+        loanApproved.push(payrollLoan);
+      }
+    }
+
+    if (income <= 3000) {
+      const securedLoan = await this.loanRepository.findByType(
+        'emprestimo com garantia',
+      );
+      if (securedLoan != null) {
+        loanApproved.push(securedLoan);
+      }
+    }
+
+    if (
+      income >= 3000 &&
+      income <= 5000 &&
+      age < 30 &&
+      (location === 'SP' ||
+        location === 'São Paulo' ||
+        location === 'são paulo')
+    ) {
+      const securedLoan = await this.loanRepository.findByType(
+        'emprestimo com garantia',
+      );
+      if (securedLoan != null) {
+        loanApproved.push(securedLoan);
+      }
+    }
+
+    return {
+      ...loanApproved,
+    };
+  }
+
   public async findById(id: string): Promise<Loan | null> {
     return await this.loanRepository.findById(id);
+  }
+
+  public async findAll(): Promise<Loan[] | null> {
+    return await this.loanRepository.findAll();
   }
 
   async update(id: string, updateLoanDTO: UpdateLoanDTO): Promise<Loan> {

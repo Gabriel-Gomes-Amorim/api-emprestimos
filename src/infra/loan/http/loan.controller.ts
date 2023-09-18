@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CreateLoanDTO } from 'src/domain/loan/dto/create-loan.dto';
-import { LoanService } from 'src/domain/loan/loan.service';
+import { ILoanRequirements, LoanService } from 'src/domain/loan/loan.service';
 import { UpdateLoanDTO } from 'src/domain/loan/dto/update-loan';
 
 @Controller('loan')
@@ -35,6 +35,40 @@ export class LoanController {
       return res
         .status(HttpStatus.BAD_REQUEST)
         .json({ message: 'erro ao cadastrar Empréstimo!', error: error });
+    }
+  }
+
+  @Post('/check-available-loan-types')
+  async typesOfLoansAvailable(
+    @Body() iLoanRequirements: ILoanRequirements,
+    @Res() res: Response,
+    @Req() req: Request,
+  ): Promise<Response> {
+    try {
+      const permittedLoanTypes =
+        await this.loanService.userPermittedLoans(iLoanRequirements);
+
+      return res
+        .status(HttpStatus.CREATED)
+        .json({ message: 'Empréstimo permitidos', permittedLoanTypes });
+    } catch (error) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        message: 'erro ao verificar empréstimos disponíveis!',
+        error: error,
+      });
+    }
+  }
+
+  @Get()
+  async findAll(@Res() res: Response): Promise<Response> {
+    try {
+      const loans = await this.loanService.findAll();
+
+      return res.status(HttpStatus.OK).json(loans);
+    } catch (error) {
+      return res
+        .status(HttpStatus.NOT_FOUND)
+        .json({ message: 'erro ao buscar empréstimos!', error: error });
     }
   }
 
