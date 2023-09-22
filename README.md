@@ -54,7 +54,3 @@ Além disso, você precisará configurar um banco de dados PostgreSQL. Você pod
 
    ```bash
     npm run migrate
-
-
-   
-
